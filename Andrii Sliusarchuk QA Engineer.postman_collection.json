@@ -1,0 +1,372 @@
+{
+	"info": {
+		"_postman_id": "22cae824-f493-4ec6-8a68-84d4f44a02c1",
+		"name": "Andrii Sliusarchuk QA Engineer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34919263"
+	},
+	"item": [
+		{
+			"name": "Create user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let username = pm.collectionVariables.replaceIn(\"{{$randomUserName}}\");\r",
+							"let firstName = pm.collectionVariables.replaceIn(\"{{$randomFirstName}}\");\r",
+							"let lastName = pm.collectionVariables.replaceIn(\"{{$randomLastName}}\");\r",
+							"let email = pm.collectionVariables.replaceIn(\"{{$randomEmail}}\");\r",
+							"let password = pm.collectionVariables.replaceIn(\"{{$randomPassword}}\");\r",
+							"let phone = pm.collectionVariables.replaceIn(\"{{$randomPhoneNumber}}\");\r",
+							"\r",
+							"pm.collectionVariables.set(\"username\", username);\r",
+							"pm.collectionVariables.set(\"firstName\", firstName);\r",
+							"pm.collectionVariables.set(\"lastName\", lastName);\r",
+							"pm.collectionVariables.set(\"email\", email);\r",
+							"pm.collectionVariables.set(\"password\", password);\r",
+							"pm.collectionVariables.set(\"phone\", phone);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();\r",
+							"\r",
+							"if (response.message > 0) {\r",
+							"    pm.collectionVariables.set(\"id\", response.message)\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"ID assigned\", function () {\r",
+							"    const message = response.message;\r",
+							"    const messageNumber = Number(message);\r",
+							"\r",
+							"    pm.expect(messageNumber).to.be.a('number');\r",
+							"    pm.expect(messageNumber).to.be.above(0);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{auth}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"firstName\": \"{{firstName}}\",\r\n    \"lastName\": \"{{lastName}}\",\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\",\r\n    \"phone\": \"{{phone}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/user",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let firstName = pm.collectionVariables.replaceIn(\"{{$randomFirstName}}\");\r",
+							"let lastName = pm.collectionVariables.replaceIn(\"{{$randomLastName}}\");\r",
+							"let email = pm.collectionVariables.replaceIn(\"{{$randomEmail}}\");\r",
+							"let password = pm.collectionVariables.replaceIn(\"{{$randomPassword}}\");\r",
+							"let phone = pm.collectionVariables.replaceIn(\"{{$randomPhoneNumber}}\");\r",
+							"\r",
+							"pm.collectionVariables.set(\"firstName\", firstName);\r",
+							"pm.collectionVariables.set(\"lastName\", lastName);\r",
+							"pm.collectionVariables.set(\"email\", email);\r",
+							"pm.collectionVariables.set(\"password\", password);\r",
+							"pm.collectionVariables.set(\"phone\", phone);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"ID was not changed\", function () {\r",
+							"    const message = response.message;\r",
+							"\r",
+							"    pm.expect(message).to.be.a('string');\r",
+							"    pm.expect(message).to.equal(pm.collectionVariables.get(\"id\"));\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{auth}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"{{id}}\",\r\n    \"username\": \"{{username}}\",\r\n    \"firstName\": \"{{firstName}}\",\r\n    \"lastName\": \"{{lastName}}\",\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\",\r\n    \"phone\": \"{{phone}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/user/:{username}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"user",
+						":{username}"
+					],
+					"variable": [
+						{
+							"key": "{username}",
+							"value": "{{username}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user by user name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();\r",
+							"\r",
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"id\": { \"type\": \"number\" },\r",
+							"        \"username\": { \"type\": \"string\" },\r",
+							"        \"firstName\": { \"type\": \"string\" },\r",
+							"        \"lastName\": { \"type\": \"string\" },\r",
+							"        \"email\": { \"type\": \"string\" },\r",
+							"        \"password\": { \"type\": \"string\" },\r",
+							"        \"phone\": { \"type\": \"string\" },\r",
+							"        \"userStatus\": { \"type\": \"number\" },\r",
+							"    },\r",
+							"    \"required\": [\"id\", \"username\", \"firstName\", \"lastName\", \"email\", \"password\", \"phone\", \"userStatus\"],\r",
+							"    \"additionalProperties\": false\r",
+							"};\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"DB contains up-to-date user data\", function () {\r",
+							"    const username = response.username;\r",
+							"    const firstName = response.firstName;\r",
+							"    const lastName = response.lastName;\r",
+							"    const email = response.email;\r",
+							"    const password = response.password;\r",
+							"    const phone = response.phone;\r",
+							"\r",
+							"    pm.expect(username).to.equal(pm.collectionVariables.get(\"username\"));\r",
+							"    pm.expect(firstName).to.equal(pm.collectionVariables.get(\"firstName\"));\r",
+							"    pm.expect(lastName).to.equal(pm.collectionVariables.get(\"lastName\"));\r",
+							"    pm.expect(email).to.equal(pm.collectionVariables.get(\"email\"));\r",
+							"    pm.expect(password).to.equal(pm.collectionVariables.get(\"password\"));\r",
+							"    pm.expect(phone).to.equal(pm.collectionVariables.get(\"phone\"));\r",
+							"});\r",
+							"\r",
+							"pm.test('Schema is valid', function () {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{auth}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/user/:{username}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"user",
+						":{username}"
+					],
+					"variable": [
+						{
+							"key": "{username}",
+							"value": "{{username}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Right user was deleted\", function () {\r",
+							"    const message = response.message;\r",
+							"\r",
+							"    pm.expect(message).to.be.a('string');\r",
+							"    pm.expect(message).to.equal(pm.collectionVariables.get(\"username\"));\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{auth}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/user/:{username}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"user",
+						":{username}"
+					],
+					"variable": [
+						{
+							"key": "{username}",
+							"value": "{{username}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "https://petstore.swagger.io/v2",
+			"type": "default"
+		},
+		{
+			"key": "auth",
+			"value": "api_key",
+			"type": "default"
+		},
+		{
+			"key": "username",
+			"value": ""
+		},
+		{
+			"key": "firstName",
+			"value": ""
+		},
+		{
+			"key": "lastName",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "phone",
+			"value": ""
+		},
+		{
+			"key": "id",
+			"value": ""
+		}
+	]
+}
